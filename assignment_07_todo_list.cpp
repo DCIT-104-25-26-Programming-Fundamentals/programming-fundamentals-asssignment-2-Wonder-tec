@@ -69,8 +69,6 @@
 // - Each feature MUST be implemented in its own function (see scaffold below).
 // - Handle invalid menu choices gracefully (print an error, do not crash).
 //
-
-//
 // =============================================================================
 // YOUR CODE BELOW — remove the // symbols from the scaffold and fill it in
 // =============================================================================
@@ -78,5 +76,117 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <limits>
 using namespace std;
 
+// -----------------------------------------------------------------------------
+// Print the menu options
+// -----------------------------------------------------------------------------
+void printMenu() {
+    cout << "\n============================" << endl;
+    cout << "     TO-DO LIST MENU" << endl;
+    cout << "============================" << endl;
+    cout << "1. Add task" << endl;
+    cout << "2. View tasks" << endl;
+    cout << "3. Delete task" << endl;
+    cout << "4. Quit" << endl;
+    cout << "Enter your choice (1-4): ";
+}
+
+// -----------------------------------------------------------------------------
+// FEATURE 1 — Add a Task
+// -----------------------------------------------------------------------------
+void addTask(vector<string>& tasks) {
+    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // clear leftover newline
+    string task;
+
+    cout << "Enter task: ";
+    getline(cin, task);
+
+    tasks.push_back(task);
+    cout << "Task added: \"" << task << "\"" << endl;
+}
+
+// -----------------------------------------------------------------------------
+// FEATURE 2 — View All Tasks
+// -----------------------------------------------------------------------------
+void viewTasks(const vector<string>& tasks) {
+    if (tasks.empty()) {
+        cout << "Your task list is empty. Add something to get started!" << endl;
+        return;
+    }
+
+    cout << "Your Tasks:" << endl;
+    for (size_t i = 0; i < tasks.size(); i++) {
+        cout << (i + 1) << ". " << tasks[i] << endl;
+    }
+}
+
+// -----------------------------------------------------------------------------
+// FEATURE 3 — Delete a Task
+// -----------------------------------------------------------------------------
+void deleteTask(vector<string>& tasks) {
+    if (tasks.empty()) {
+        cout << "Your task list is empty. Nothing to delete." << endl;
+        return;
+    }
+
+    viewTasks(tasks);
+
+    int choice;
+    cout << "Enter task number to delete: ";
+    cin >> choice;
+
+    if (choice < 1 || choice > static_cast<int>(tasks.size())) {
+        cout << "Error: invalid task number." << endl;
+        return;
+    }
+
+    string removed = tasks[choice - 1];
+    tasks.erase(tasks.begin() + (choice - 1));
+
+    cout << "Task \"" << removed << "\" has been removed." << endl;
+}
+
+// -----------------------------------------------------------------------------
+// main
+// -----------------------------------------------------------------------------
+int main() {
+    vector<string> tasks;
+    int choice;
+    bool running = true;
+
+    while (running) {
+        printMenu();
+        cin >> choice;
+
+        if (cin.fail()) {
+            // Non-numeric input entered
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Error: please enter a number between 1 and 4." << endl;
+            continue;
+        }
+
+        switch (choice) {
+            case 1:
+                addTask(tasks);
+                break;
+            case 2:
+                viewTasks(tasks);
+                break;
+            case 3:
+                deleteTask(tasks);
+                break;
+            case 4:
+                cout << "Goodbye!" << endl;
+                running = false;
+                break;
+            default:
+                cout << "Error: invalid choice. Please enter 1-4." << endl;
+                break;
+        }
+    }
+
+    return 0;
+}
